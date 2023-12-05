@@ -50,8 +50,8 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="AntAgent.cs" />
-        <Compile Include="Form1.cs" />
-        <Compile Include="Form1.Designer.cs" />
+        <Compile Include="PlanetForm.cs" />
+        <Compile Include="PlanetForm.Designer.cs" />
         <Compile Include="PlanetAgent.cs" />
         <Compile Include="Program.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>

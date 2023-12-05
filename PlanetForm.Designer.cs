@@ -1,6 +1,6 @@
 ﻿namespace AntColony
 {
-    partial class Form1
+    partial class PlanetForm
     {
         /// <summary>
         /// Required designer variable.
