@@ -13,6 +13,7 @@ namespace AntColony
         public const double MaxWeight = 100; // max node Weight
         public const double ResourceAddWeight = 2; // weight added when ant with resource passes
         public const double PassRemoveWeight = 1; // weight removed when ant passes without resource
+        public const double TimePassRemoveWeight = 0.1; // weight removed when ant passes without resource
         
         public readonly static Random RandNoGen = new Random();
 
