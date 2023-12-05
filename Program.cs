@@ -1,22 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using ActressMas;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace AntColony
 {
-    static class Program
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        private static void Main(string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            var env = new EnvironmentMas(0, 100);
+
+            var planetAgent = new PlanetAgent();
+            env.Add(planetAgent, "planet");
+            
+            for (int i = 1; i <= Utils.NoExplorers; i++)
+            {
+                var explorerAgent = new ExplorerAgent();
+                env.Add(explorerAgent, "explorer" + i);
+            }
+
+            Thread.Sleep(500);
+
+            env.Start();
         }
     }
 }
