@@ -37,9 +37,37 @@ namespace AntColony
 
             switch (action)
             {
-                // TO DO: Add actions      
+                case "move":
+                    HandleMoveAction();
+                    break;
+                case "food":
+                    HandleFoodAction();
+                    break;
+                case "base":
+                    HandleBaseAction();
+                    break;
+                default:
+                    break;
             }
         }
-        
+
+        public void HandleMoveAction()
+        {
+            // 1. schimbare coordonte
+            // 2. in functie de starea interna (searching sau carry) se trimite mesaj la planeta cu SEARCH sau CARRY
+        }
+
+        public void HandleFoodAction()
+        {
+            // 1. schimbare stare interna in carry
+            // 2. trimite la planeta CARRY
+        }
+
+        public void HandleBaseAction()
+        {
+            // 1. schimbare stare in searching
+            // 2.  trimite la planeta SEARCH
+        }
+
     }
 }
