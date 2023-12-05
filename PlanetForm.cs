@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace AntColony
 {
-    public partial class Form1 : Form
+    public partial class PlanetForm : Form
     {
-        public Form1()
+        public PlanetForm()
         {
             InitializeComponent();
         }
