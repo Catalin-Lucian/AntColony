@@ -14,10 +14,10 @@ namespace AntColony
             var planetAgent = new PlanetAgent();
             env.Add(planetAgent, "planet");
             
-            for (int i = 1; i <= Utils.NoExplorers; i++)
+            for (int i = 1; i <= Utils.NoAnts; i++)
             {
-                var explorerAgent = new ExplorerAgent();
-                env.Add(explorerAgent, "explorer" + i);
+                var antAgent = new AntAgent();
+                env.Add(antAgent, "ant" + i);
             }
 
             Thread.Sleep(500);
