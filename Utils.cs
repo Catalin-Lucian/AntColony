@@ -5,13 +5,19 @@ namespace AntColony
 {
     public static class Utils
     {
-        public const int Size = 11;
-        public const int NoAnts = 5;
-        public const int NoNodes = 31;
-
+        // World data
+        public const int NoAnts = 10;
         public const int Delay = 200;
+        
+        //Graph data
+        public const double MaxWeight = 100; // max node Weight
+        public const double ResourceAddWeight = 2; // weight added when ant with resource passes
+        public const double PassRemoveWeight = 1; // weight removed when ant passes without resource
+        
         public readonly static Random RandNoGen = new Random();
 
+            
+            
         public static void ParseMessage(string content, out string action, out List<string> parameters)
         {
             string[] t = content.Split();

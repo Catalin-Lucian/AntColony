@@ -13,10 +13,7 @@ namespace AntColony
         public Dictionary<string, string> ExplorerPositions { get; set; }
         public Dictionary<string, string> ResourcePositions { get; set; }
         public Dictionary<string, string> Loads { get; set; }
-
-        //will have <pos , streanth> 
-        public int[] max_streanth = new int[2];
-
+        
         public Dictionary<string, int> Trails { get; set; }
 
         private string _basePosition;
