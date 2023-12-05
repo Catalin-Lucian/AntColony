@@ -6,9 +6,8 @@ namespace AntColony
     public static class Utils
     {
         public const int Size = 11;
-        public const int NoExplorers = 5;
-        public const int NoResources = 30;
-        public const int NoSpots = 4;
+        public const int NoAnts = 5;
+        public const int NoNodes = 31;
 
         public const int Delay = 200;
         public readonly static Random RandNoGen = new Random();
