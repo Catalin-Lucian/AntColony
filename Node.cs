@@ -11,16 +11,16 @@ namespace AntColony
         public int _x;
         public int _y;
         public int _resource;
-        public string _name;
         public Node _toHome;
         public Dictionary<string, Edge> _edges;
         
+        public string Name => $"{_x}_{_y}";
+
         public Node(int x, int y, int resource)
         {
             _x = x;
             _y = y;
             _resource = resource;
-            _name = $"{_x}_{_y}";
         }
 
         public void AddEdge(string nodeName, Edge edge)

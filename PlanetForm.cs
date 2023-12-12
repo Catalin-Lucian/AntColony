@@ -37,9 +37,10 @@ namespace AntColony
         private void DrawPlanet()
         {
             // force the window to be sized as Utils.SizeX and Utils.SizeY
+            Width = Utils.SizeX;
+            Height = Utils.SizeY;
             
-            
-            // force the picturebox to use Utils.SizeX and Utils.SizeY as size
+            // force the picture box to use Utils.SizeX and Utils.SizeY as size
             pictureBox.Width = Utils.SizeX;
             pictureBox.Height = Utils.SizeY;
             
@@ -57,21 +58,25 @@ namespace AntColony
             if (_ownerAgent == null)
                 return;
             
-            // draw the base node
-            DrawBase(g, _ownerAgent.BaseNode);
+            
+            // Draw all edges in the graph
+            foreach (var edge in _ownerAgent.Edges.Values)
+            {
+                DrawEdge(g, edge, Brushes.Black);
+            }
                 
             // Draw all nodes in the graph
             foreach (var node in _ownerAgent.Nodes.Values)
             {
                 DrawNode(g, node, Brushes.Black);
             }
-                
-            // Draw all edges in the graph
-            foreach (var edge in _ownerAgent.Edges.Values)
-            {
-                DrawEdge(g, edge, Brushes.Black);
-            }
+            
+            // draw the base node
+            DrawBase(g, _ownerAgent.BaseNode);
 
+            // display the buffer image 
+            Graphics pbg = pictureBox.CreateGraphics();
+            pbg.DrawImage(_doubleBufferImage, 0, 0);
         }
 
         void DrawBase(Graphics g, Node nodeBase)

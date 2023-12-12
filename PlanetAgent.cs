@@ -18,19 +18,29 @@ namespace AntColony
 
         public PlanetAgent()
         {
-            var t = new Thread(new ThreadStart(GUIThread));
+            CreateNodes();
+            
+            var t = new Thread(GuiThread);
             t.Start();
 
-            CreateNodes();
         }
 
         private void CreateNodes()
         {
+            Nodes = new Dictionary<string, Node>();
+            Edges = new Dictionary<string, Edge>();
+            
             // create base node 
-            BaseNode = new Node(Utils.SizeX / 2, Utils.SizeY / 2, 0);
+            BaseNode = new Node(Utils.SizeX/2, Utils.SizeY/2, 0);
+            
+            // create other nodes
+            
+            
+            
+            Nodes.Add(BaseNode.Name, BaseNode);
         }
 
-        private void GUIThread()
+        private void GuiThread()
         {
             _formGui = new PlanetForm();
             _formGui.SetOwner(this);
