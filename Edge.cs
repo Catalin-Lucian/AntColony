@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace AntColony
 {
-    class Edge
+    public class Edge
     {
-        public Node _nodeA;
-        public Node _nodeB;
-        public double _weight;
+        public Node NodeA;
+        public Node NodeB;
+        public double Weight;
 
         public Edge(Node nodeA, Node nodeB, double weight)
         {
-            _nodeA = nodeA;
-            _nodeB = nodeB;
-            _weight = weight;
+            NodeA = nodeA;
+            NodeB = nodeB;
+            Weight = weight;
         }
     }
 }

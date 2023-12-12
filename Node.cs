@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AntColony
 {
-    class Node
+    public class Node
     {
         public int _x;
         public int _y;

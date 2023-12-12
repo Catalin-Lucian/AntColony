@@ -50,6 +50,8 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="AntAgent.cs" />
+        <Compile Include="Edge.cs" />
+        <Compile Include="Node.cs" />
         <Compile Include="PlanetAgent.cs" />
         <Compile Include="PlanetForm.cs">
           <SubType>Form</SubType>
