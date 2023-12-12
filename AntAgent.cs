@@ -17,16 +17,11 @@ namespace AntColony
         {
             Console.WriteLine($@"Starting {Name}");
             
-            _x = 0;
-            _y = 0;
-            _state = State.Searching;
-            
-            // Send("planet", Utils.Str("position", _x, _y));
-        }
+            this._x = 0;
+            this._y = 0;
+            this._state = State.Searching;
 
-        private bool IsAtBase()
-        {
-            return _x == 0 && _y == 0; // the position of the base
+            SendState();
         }
 
         public override void Act(Message message)
@@ -38,7 +33,7 @@ namespace AntColony
             switch (action)
             {
                 case "move":
-                    HandleMoveAction();
+                    HandleMoveAction(int.Parse(parameters[0]), int.Parse(parameters[1]));
                     break;
                 case "food":
                     HandleFoodAction();
@@ -51,23 +46,54 @@ namespace AntColony
             }
         }
 
-        public void HandleMoveAction()
+        private bool IsAtBase()
         {
-            // 1. schimbare coordonte
-            // 2. in functie de starea interna (searching sau carry) se trimite mesaj la planeta cu SEARCH sau CARRY
+            return this._x == 0 && this._y == 0; // the position of the base
         }
 
-        public void HandleFoodAction()
+        private void HandleMoveAction(int x, int y)
         {
-            // 1. schimbare stare interna in carry
-            // 2. trimite la planeta CARRY
+            // 1. change ant coordonates
+            this._x = x;
+            this._y = y;
+
+            // 2. send current state to planet
+            SendState();
         }
 
-        public void HandleBaseAction()
+        private void HandleFoodAction()
         {
-            // 1. schimbare stare in searching
-            // 2.  trimite la planeta SEARCH
+            // 1. change state to Carrying
+            this._state = State.Carrying;
+
+            // 2. send state Carrying to planet
+            SendState();
         }
 
+        private void HandleBaseAction()
+        {
+            // 1. change state to Searching
+            this._state = State.Searching;
+
+            // 2. send state Searching to planet
+            SendState();
+        }
+
+        private void SendState()
+        {
+            switch (this._state)
+            {
+                case State.Carrying:
+                    Send("planet", Utils.Str("carry", this._x, this._y));
+                    break;
+
+                case State.Searching:
+                    Send("planet", Utils.Str("search", this._x, this._y));
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 }
