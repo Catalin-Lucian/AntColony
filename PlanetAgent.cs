@@ -11,7 +11,7 @@ namespace AntColony
     {
         private PlanetForm _formGui;
         public Dictionary<string, Node> Nodes { get; set; }
-        public Dictionary<string, Edge> Edges { get; set; }
+        public List<Edge> Edges { get; set; }
         
         public Node BaseNode { get; set; }
         
@@ -28,15 +28,68 @@ namespace AntColony
         private void CreateNodes()
         {
             Nodes = new Dictionary<string, Node>();
-            Edges = new Dictionary<string, Edge>();
+            Edges = new List<Edge>();
             
             // create base node 
             BaseNode = new Node(Utils.SizeX/2, Utils.SizeY/2, 0);
             
-            // create other nodes
+            // create left nodes
+            var n1 = new Node(260, 200, 0);
+            var n2 = new Node(230, 160, 0);
+            var n3 = new Node(230, 240, 0);
+            var n4 = new Node(230, 120, 0);
+            var n5 = new Node(200, 160, 0);
+            var n6 = new Node(200, 120, 5);
+            var n7 = new Node(170, 200, 0);
+            var n8 = new Node(140, 160, 0);
+            var n9 = new Node(140, 230, 0);
+            var n10 = new Node(140, 120, 8);
+            var n11 = new Node(110, 160, 20);
+            var n12 = new Node(140, 280, 0);
+            var n13 = new Node(110, 240, 0);
+            var n14 = new Node(110, 320, 10);
             
+            Nodes.Add(n1.Name, n1);
+            Nodes.Add(n2.Name, n2);
+            Nodes.Add(n3.Name, n3);
+            Nodes.Add(n4.Name, n4);
+            Nodes.Add(n5.Name, n5);
+            Nodes.Add(n6.Name, n6);
+            Nodes.Add(n7.Name, n7);
+            Nodes.Add(n8.Name, n8);
+            Nodes.Add(n9.Name, n9);
+            Nodes.Add(n10.Name, n10);
+            Nodes.Add(n11.Name, n11);
+            Nodes.Add(n12.Name, n12);
+            Nodes.Add(n13.Name, n13);
+            Nodes.Add(n14.Name, n14);
             
+            Edges.Add(Utils.Connect(BaseNode, n1));
+            Edges.Add(Utils.Connect(n1, n2));
+            Edges.Add(Utils.Connect(n1, n3));
+            Edges.Add(Utils.Connect(n2, n4));
+            Edges.Add(Utils.Connect(n2, n5));
+            Edges.Add(Utils.Connect(n5, n6));
+            Edges.Add(Utils.Connect(n5, n7));
+            Edges.Add(Utils.Connect(n7, n8));
+            Edges.Add(Utils.Connect(n7, n9));
+            Edges.Add(Utils.Connect(n8, n10));
+            Edges.Add(Utils.Connect(n8, n11));
+            Edges.Add(Utils.Connect(n3, n12));
+            Edges.Add(Utils.Connect(n12, n13));
+            Edges.Add(Utils.Connect(n12, n14));
             
+            // create right nodes
+            var n15 = new Node(300, 240, 0);
+            var n16 = new Node(300, 280, 10);
+            
+            Nodes.Add(n15.Name, n15);
+            Nodes.Add(n16.Name, n16);
+            
+            Edges.Add(Utils.Connect(BaseNode, n15));
+            Edges.Add(Utils.Connect(n15, n16));
+            Edges.Add(Utils.Connect(n16, n3));
+                
             Nodes.Add(BaseNode.Name, BaseNode);
         }
 

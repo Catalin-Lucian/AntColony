@@ -60,7 +60,7 @@ namespace AntColony
             
             
             // Draw all edges in the graph
-            foreach (var edge in _ownerAgent.Edges.Values)
+            foreach (var edge in _ownerAgent.Edges)
             {
                 DrawEdge(g, edge, Brushes.Black);
             }
@@ -68,32 +68,33 @@ namespace AntColony
             // Draw all nodes in the graph
             foreach (var node in _ownerAgent.Nodes.Values)
             {
-                DrawNode(g, node, Brushes.Black);
+                DrawNode(g, node, node._resource > 0 ? Brushes.Blue : Brushes.Black);
             }
             
             // draw the base node
             DrawBase(g, _ownerAgent.BaseNode);
 
             // display the buffer image 
-            Graphics pbg = pictureBox.CreateGraphics();
+            var pbg = pictureBox.CreateGraphics();
             pbg.DrawImage(_doubleBufferImage, 0, 0);
         }
 
-        void DrawBase(Graphics g, Node nodeBase)
+        private static void DrawBase(Graphics g, Node nodeBase)
         {
-            DrawNode(g, nodeBase, Brushes.Red);
+            g.FillEllipse(Brushes.Red,nodeBase._x, nodeBase._y, 10, 10 );
         }
-        
-        void DrawNode(Graphics g, Node node, Brush brush)
+
+        private static void DrawNode(Graphics g, Node node, Brush brush)
         {
             // Draw the node
             g.FillEllipse(brush,node._x, node._y, 10, 10 );
+            // draw text above
         }
-        
-        void DrawEdge(Graphics g, Edge edge, Brush brush)
+
+        private static void DrawEdge(Graphics g, Edge edge, Brush brush)
         {
             // Draw the edge
-            g.DrawLine(Pens.DarkGray, edge.NodeA._x, edge.NodeA._y, edge.NodeB._x, edge.NodeB._y);
+            g.DrawLine(Pens.DarkGray, edge.NodeA._x+5, edge.NodeA._y+5, edge.NodeB._x+5, edge.NodeB._y+5);
         }
     }
 }

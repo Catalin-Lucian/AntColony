@@ -61,5 +61,17 @@ namespace AntColony
         {
             return $"{p1} {p2} {p3}";
         }
+
+        public static Edge Connect(Node n1, Node n2)
+        {
+            var edge = new Edge(n1, n2, 0);
+            n1.AddEdge(n2.Name, edge);
+            n2.AddEdge(n1.Name, edge);
+            
+            if (n2._toHome != null)
+                n2.AddToHome(n1);
+
+            return edge;
+        }
     }
 }
