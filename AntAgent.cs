@@ -1,61 +1,61 @@
 ﻿using ActressMas;
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace AntColony
 {
     public class AntAgent : Agent
     {
-        private int _x, _y;
         private State _state;
-        
-
-        private enum State { Searching, Carrying };
+        private int _x;
+        private int _y;
 
         public override void Setup()
         {
             Console.WriteLine($@"Starting {Name}");
-            
-            this._x = 0;
-            this._y = 0;
-            this._state = State.Searching;
+
+            _x = 300;
+            _y = 200;
+            _state = State.Searching;
 
             SendState();
         }
 
         public override void Act(Message message)
         {
-            Console.WriteLine($@"[{Name} -> {message.Sender}]: {message.Content}");
+            Console.WriteLine($"[{Name} -> {message.Sender}]: {message.Content}");
 
-            Utils.ParseMessage(message.Content, out string action, out List<string> parameters);
+            Utils.ParseMessage(message.Content, out string action, out string parameter);
 
             switch (action)
             {
                 case "move":
-                    HandleMoveAction(int.Parse(parameters[0]), int.Parse(parameters[1]));
+                    HandleMoveAction(parameter);
                     break;
+
                 case "food":
                     HandleFoodAction();
                     break;
+
                 case "base":
                     HandleBaseAction();
-                    break;
-                default:
                     break;
             }
         }
 
         private bool IsAtBase()
         {
-            return this._x == 0 && this._y == 0; // the position of the base
+            return _x == 0 && _y == 0; // the position of the base
         }
 
-        private void HandleMoveAction(int x, int y)
+        private void HandleMoveAction(string parameter)
         {
             // 1. change ant coordonates
-            this._x = x;
-            this._y = y;
+            string[] values = parameter.Split('_');
+            int x = int.Parse(values[0]);
+            int y = int.Parse(values[1]);
+
+            _x = x;
+            _y = y;
 
             // 2. send current state to planet
             SendState();
@@ -64,7 +64,7 @@ namespace AntColony
         private void HandleFoodAction()
         {
             // 1. change state to Carrying
-            this._state = State.Carrying;
+            _state = State.Carrying;
 
             // 2. send state Carrying to planet
             SendState();
@@ -73,7 +73,7 @@ namespace AntColony
         private void HandleBaseAction()
         {
             // 1. change state to Searching
-            this._state = State.Searching;
+            _state = State.Searching;
 
             // 2. send state Searching to planet
             SendState();
@@ -81,19 +81,23 @@ namespace AntColony
 
         private void SendState()
         {
-            switch (this._state)
+            switch (_state)
             {
                 case State.Carrying:
-                    Send("planet", Utils.Str("carry", this._x, this._y));
+                    Send("planet", Utils.Str("carry", _x, _y));
                     break;
 
                 case State.Searching:
-                    Send("planet", Utils.Str("search", this._x, this._y));
-                    break;
-
-                default:
+                    Send("planet", Utils.Str("search", _x, _y));
                     break;
             }
+        }
+
+
+        private enum State
+        {
+            Searching,
+            Carrying
         }
     }
 }
