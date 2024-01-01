@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AntColony
+﻿namespace AntColony
 {
     public class Edge
     {
-        public Node NodeA;
-        public Node NodeB;
+        public Node A;
+        public Node B;
         public double Weight;
 
         public Edge(Node nodeA, Node nodeB, double weight)
         {
-            NodeA = nodeA;
-            NodeB = nodeB;
+            A = nodeA;
+            B = nodeB;
             Weight = weight;
         }
     }

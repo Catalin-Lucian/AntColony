@@ -6,15 +6,15 @@ namespace AntColony
     public class AntAgent : Agent
     {
         private State _state;
-        private int _x;
-        private int _y;
+        //public Position Position;
+        public string _currentNode;
 
         public override void Setup()
         {
             Console.WriteLine($@"Starting {Name}");
 
-            _x = 300;
-            _y = 200;
+            //Position = new Position(Utils.XPoints / 2, Utils.YPoints / 2);
+            _currentNode = "base";
             _state = State.Searching;
 
             SendState();
@@ -22,6 +22,9 @@ namespace AntColony
 
         public override void Act(Message message)
         {
+            // sleep for 1 second
+            //Thread.Sleep(1000);
+
             Console.WriteLine($"[{Name} -> {message.Sender}]: {message.Content}");
 
             Utils.ParseMessage(message.Content, out string action, out string parameter);
@@ -42,20 +45,10 @@ namespace AntColony
             }
         }
 
-        private bool IsAtBase()
+        private void HandleMoveAction(string nodeName)
         {
-            return _x == 0 && _y == 0; // the position of the base
-        }
-
-        private void HandleMoveAction(string parameter)
-        {
-            // 1. change ant coordonates
-            string[] values = parameter.Split('_');
-            int x = int.Parse(values[0]);
-            int y = int.Parse(values[1]);
-
-            _x = x;
-            _y = y;
+            // 1. change ant curentNode
+            _currentNode = nodeName;
 
             // 2. send current state to planet
             SendState();
@@ -84,11 +77,11 @@ namespace AntColony
             switch (_state)
             {
                 case State.Carrying:
-                    Send("planet", Utils.Str("carry", _x, _y));
+                    Send("planet", Utils.Str("carry", _currentNode));
                     break;
 
                 case State.Searching:
-                    Send("planet", Utils.Str("search", _x, _y));
+                    Send("planet", Utils.Str("search", _currentNode));
                     break;
             }
         }

@@ -21,6 +21,7 @@ namespace AntColony
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
+
             DrawPlanet();
         }
 
@@ -31,25 +32,20 @@ namespace AntColony
 
         private void pictureBox_Resize(object sender, EventArgs e)
         {
+            Utils.XPointSize = pictureBox.Width / Utils.XPoints;
+            Utils.YPointSize = pictureBox.Height / Utils.YPoints;
             DrawPlanet();
         }
 
         private void DrawPlanet()
         {
-            // force the window to be sized as Utils.SizeX and Utils.SizeY
-            Width = Utils.SizeX;
-            Height = Utils.SizeY;
-
-            // force the picture box to use Utils.SizeX and Utils.SizeY as size
-            pictureBox.Width = Utils.SizeX;
-            pictureBox.Height = Utils.SizeY;
-
 
             if (_doubleBufferImage != null)
             {
                 _doubleBufferImage.Dispose();
                 GC.Collect(); // prevents memory leaks
             }
+
 
             _doubleBufferImage = new Bitmap(pictureBox.Width, pictureBox.Height);
             var g = Graphics.FromImage(_doubleBufferImage);
@@ -61,14 +57,18 @@ namespace AntColony
 
             // Draw all edges in the graph
             foreach (var edge in _ownerAgent.Edges)
-                DrawEdge(g, edge, Brushes.Black);
+                DrawEdge(g, edge);
 
             // Draw all nodes in the graph
             foreach (var node in _ownerAgent.Nodes.Values)
-                DrawNode(g, node, node._resource > 0 ? Brushes.Blue : Brushes.Black);
+                DrawNode(g, node, node.Resource);
 
             // draw the base node
             DrawBase(g, _ownerAgent.BaseNode);
+
+            // draw the ants
+            foreach (var antPair in _ownerAgent.AntsPositions)
+                DrawAnt(g, antPair.Key, antPair.Value);
 
             // display the buffer image 
             var pbg = pictureBox.CreateGraphics();
@@ -77,28 +77,45 @@ namespace AntColony
 
         private static void DrawBase(Graphics g, Node nodeBase)
         {
-            g.FillEllipse(Brushes.Red, nodeBase._x, nodeBase._y, 10, 10);
+            g.FillEllipse(Brushes.Red, nodeBase.Pos.X, nodeBase.Pos.Y, 18, 18);
         }
 
-        private static void DrawNode(Graphics g, Node node, Brush brush)
+        private static void DrawNode(Graphics g, Node node, int resource)
         {
+            if (resource > 20) resource = 20;
+            var p = resource / 20.0;
+            var brush = new SolidBrush(Color.FromArgb(0, (int)(255 * p), 0));
+
             // Draw the node
-            g.FillEllipse(brush, node._x, node._y, 10, 10);
-            // draw text above
+            g.FillEllipse(brush, node.Pos.X, node.Pos.Y, 18, 18);
+            // draw name above node
+            g.DrawString(node.Name, new Font("Arial", 8), Brushes.Black, node.Pos.X, node.Pos.Y - 10);
+            // draw resource below node
+            g.DrawString(node.Resource.ToString(), new Font("Arial", 8), Brushes.Black, node.Pos.X, node.Pos.Y + 20);
         }
 
-        private static void DrawEdge(Graphics g, Edge edge, Brush brush)
+        private static void DrawEdge(Graphics g, Edge edge)
         {
             // decide on color based on weight
-            var pen = Pens.Black;
+            Color color;
             if (edge.Weight == 0)
-                pen = Pens.LightGray;
+                color = Color.LightGray;
             else if (edge.Weight < 5)
-                pen = Pens.Green;
+                color = Color.Green;
             else
-                pen = Pens.Red;
+                color = Color.Red;
+
+            Pen pen = new Pen(color, 2);
             // Draw the edge
-            g.DrawLine(pen, edge.NodeA._x + 5, edge.NodeA._y + 5, edge.NodeB._x + 5, edge.NodeB._y + 5);
+            g.DrawLine(pen, edge.A.Pos.X + 9, edge.A.Pos.Y + 9, edge.B.Pos.X + 9, edge.B.Pos.Y + 9);
+        }
+
+        private static void DrawAnt(Graphics g, string antName, Position pos)
+        {
+            // Draw the ant
+            g.FillEllipse(Brushes.Blue, pos.X + 4, pos.Y + 4, 10, 10);
+            // draw name above ant
+            //g.DrawString(antName, new Font("Arial", 8), Brushes.Black, pos.X, pos.Y - 10);
         }
     }
 }

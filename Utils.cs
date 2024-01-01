@@ -6,12 +6,15 @@ namespace AntColony
     public static class Utils
     {
         // World data
-        public const int NoAnts = 5;
-        public const int Delay = 200;
+        public const int NoAnts = 10;
+        public const int Speed = 200;
 
         // side of the square world
-        public const int SizeX = 600;
-        public const int SizeY = 400;
+        public const int XPoints = 40;
+        public const int YPoints = 20;
+
+        public static int XPointSize = 30;
+        public static int YPointSize = 30;
 
         //Graph data
         public const double MaxWeight = 50; // max node Weight
@@ -25,7 +28,7 @@ namespace AntColony
 
         public static void ParseMessage(string content, out string action, out List<string> parameters)
         {
-            string[] t = content.Split();
+            string[] t = content.Remove(content.Length - 1).Split();
 
             action = t[0];
 
@@ -50,26 +53,39 @@ namespace AntColony
             parameters += t[t.Length - 1];
         }
 
-        public static string Str(object p1, object p2)
+        public static string Str(params object[] ps)
         {
-            return $"{p1} {p2}";
-        }
+            string s = "";
 
-        public static string Str(object p1, object p2, object p3)
-        {
-            return $"{p1} {p2}_{p3}";
-        }
+            for (int i = 0; i < ps.Length - 1; i++)
+            {
+                s += $"{ps[i]} ";
+            }
+            s += $"{ps[ps.Length - 1]}";
 
-        public static Edge Connect(Node n1, Node n2)
-        {
-            var edge = new Edge(n1, n2, 0);
-            n1.AddEdge(n2.Name, edge);
-            n2.AddEdge(n1.Name, edge);
-
-            if (n2.ToHome == null)
-                n2.AddToHome(n1);
-
-            return edge;
+            return s;
         }
     }
+
+    public class Position
+    {
+        private int _x;
+        private int _y;
+
+        public int X => _x * Utils.XPointSize;
+        public int Y => _y * Utils.YPointSize;
+
+        public Position(int x, int y) { _x = x; _y = y; }
+        public Position(string x, string y)
+        {
+            _x = int.Parse(x);
+            _y = int.Parse(y);
+        }
+
+        public override string ToString()
+        {
+            return $"{X} {Y}";
+        }
+    }
+
 }

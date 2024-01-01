@@ -7,13 +7,13 @@ namespace AntColony
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             var env = new EnvironmentMas(0, 100);
 
             var planetAgent = new PlanetAgent();
             env.Add(planetAgent, "planet");
-            
+
             for (int i = 1; i <= Utils.NoAnts; i++)
             {
                 var antAgent = new AntAgent();
