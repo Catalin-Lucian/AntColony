@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AntColony
 {
     public class Node
     {
-        public int Resource;
-        public Node ToHome;
+        public string name;
+        public int resource;
 
-        public Position Pos;
+        public Dictionary<string, Edge> edges;
+        public Position position;
+        public Node toHome;
 
-        public string Name;
-
-        public Dictionary<string, Edge> Edges;
-
-        public Node(String name, int x, int y, int resource)
+        public Node(string name, int xPoint, int yPoint, int resource)
         {
-            Name = name;
-            Pos = new Position(x, y);
-            Resource = resource;
-            Edges = new Dictionary<string, Edge>();
+            this.name = name;
+            position = Position.FromPoints(xPoint, yPoint);
+            this.resource = resource;
+            edges = new Dictionary<string, Edge>();
         }
     }
 }

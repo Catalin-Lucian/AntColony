@@ -1,20 +1,21 @@
 ﻿using ActressMas;
 using System;
+using System.Collections.Generic;
 
 namespace AntColony
 {
     public class AntAgent : Agent
     {
         private State _state;
-        //public Position Position;
-        public string _currentNode;
+        private Position _currentPosition;
+        private string _currentTargetNode;
 
         public override void Setup()
         {
             Console.WriteLine($@"Starting {Name}");
 
-            //Position = new Position(Utils.XPoints / 2, Utils.YPoints / 2);
-            _currentNode = "base";
+            _currentTargetNode = "base";
+            _currentPosition = Position.FromPoints(Utils.XPoints / 2, Utils.YPoints / 2);
             _state = State.Searching;
 
             SendState();
@@ -22,17 +23,15 @@ namespace AntColony
 
         public override void Act(Message message)
         {
-            // sleep for 1 second
             //Thread.Sleep(1000);
 
-            Console.WriteLine($"[{Name} -> {message.Sender}]: {message.Content}");
-
-            Utils.ParseMessage(message.Content, out string action, out string parameter);
+            //Console.WriteLine($"[{Name} -> {message.Sender}]: {message.Content}");
+            Utils.ParseMessage(message.Content, out string action, out List<string> parameters);
 
             switch (action)
             {
                 case "move":
-                    HandleMoveAction(parameter);
+                    HandleMoveAction(parameters[0], new Position(parameters[1], parameters[2]));
                     break;
 
                 case "food":
@@ -45,12 +44,15 @@ namespace AntColony
             }
         }
 
-        private void HandleMoveAction(string nodeName)
+        private void HandleMoveAction(string nodeName, Position nodePosition)
         {
-            // 1. change ant curentNode
-            _currentNode = nodeName;
+            // 1. calculate new position
+            _currentPosition = _currentPosition.MoveTo(nodePosition, Utils.Speed);
 
-            // 2. send current state to planet
+            // 2. change ant curentNode
+            _currentTargetNode = nodeName;
+
+            // 3. send current state to planet
             SendState();
         }
 
@@ -77,11 +79,11 @@ namespace AntColony
             switch (_state)
             {
                 case State.Carrying:
-                    Send("planet", Utils.Str("carry", _currentNode));
+                    Send("planet", Utils.Str("carry", _currentTargetNode, _currentPosition.x, _currentPosition.y));
                     break;
 
                 case State.Searching:
-                    Send("planet", Utils.Str("search", _currentNode));
+                    Send("planet", Utils.Str("search", _currentTargetNode, _currentPosition.x, _currentPosition.y));
                     break;
             }
         }

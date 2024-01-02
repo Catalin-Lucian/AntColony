@@ -7,7 +7,7 @@ namespace AntColony
     {
         // World data
         public const int NoAnts = 10;
-        public const int Speed = 200;
+        public const int Speed = 15;
 
         // side of the square world
         public const int XPoints = 40;
@@ -17,7 +17,7 @@ namespace AntColony
         public static int YPointSize = 30;
 
         //Graph data
-        public const double MaxWeight = 50; // max node Weight
+        public const double MaxWeight = 30; // max node Weight
         public const double ResourceAddWeight = 2; // weight added when ant with resource passes
         public const double PassRemoveWeight = 1; // weight removed when ant passes without resource
         public const double TimePassRemoveWeight = 0.1; // weight removed when ant passes without resource
@@ -28,7 +28,7 @@ namespace AntColony
 
         public static void ParseMessage(string content, out string action, out List<string> parameters)
         {
-            string[] t = content.Remove(content.Length - 1).Split();
+            string[] t = content.Split();
 
             action = t[0];
 
@@ -69,22 +69,68 @@ namespace AntColony
 
     public class Position
     {
-        private int _x;
-        private int _y;
+        public int x;
+        public int y;
 
-        public int X => _x * Utils.XPointSize;
-        public int Y => _y * Utils.YPointSize;
+        public Position(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
 
-        public Position(int x, int y) { _x = x; _y = y; }
         public Position(string x, string y)
         {
-            _x = int.Parse(x);
-            _y = int.Parse(y);
+            this.x = int.Parse(x);
+            this.y = int.Parse(y);
+        }
+
+        public Position(Position p)
+        {
+            this.x = p.x;
+            this.y = p.y;
+        }
+
+        static public Position FromPoints(int xPoint, int yPoint)
+        {
+            return new Position(xPoint * Utils.XPointSize, yPoint * Utils.YPointSize);
         }
 
         public override string ToString()
         {
-            return $"{X} {Y}";
+            return $"{x} {y}";
+        }
+
+        public bool IsEqual(Position p)
+        {
+            return x == p.x && y == p.y;
+        }
+
+        public bool IsNotEqual(Position p)
+        {
+            return x != p.x || y != p.y;
+        }
+
+        public Position MoveTo(Position toPosition, int speed)
+        {
+            int x = toPosition.x;
+            int y = toPosition.y;
+
+            if (x == this.x && y == this.y)
+                return new Position(this);
+
+            int dx = x - this.x;
+            int dy = y - this.y;
+
+            double distance = Math.Sqrt(dx * dx + dy * dy);
+            if (distance < speed)
+                // we are close enough to the target
+                return new Position(toPosition);
+
+            // calculate next point 
+            double ratio = speed / distance;
+            int nextX = (int)(this.x + dx * ratio);
+            int nextY = (int)(this.y + dy * ratio);
+            return new Position(nextX, nextY);
         }
     }
 

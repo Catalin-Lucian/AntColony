@@ -1,5 +1,4 @@
 ﻿using ActressMas;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,19 +10,19 @@ namespace AntColony
     public class PlanetAgent : Agent
     {
         private PlanetForm _formGui;
-        public Dictionary<string, Node> Nodes;
-        public List<Edge> Edges;
+        public Dictionary<string, Node> nodes;
+        public List<Edge> edges;
 
-        public Dictionary<string, Position> AntsPositions;
-        public Node BaseNode;
+        public Dictionary<string, Position> antsPositions;
+        public Node baseNode;
 
 
 
         public PlanetAgent()
         {
-            Nodes = new Dictionary<string, Node>();
-            Edges = new List<Edge>();
-            AntsPositions = new Dictionary<string, Position>();
+            nodes = new Dictionary<string, Node>();
+            edges = new List<Edge>();
+            antsPositions = new Dictionary<string, Position>();
             CreateNodes();
 
             var t = new Thread(GuiThread);
@@ -37,12 +36,12 @@ namespace AntColony
         private void CreateNodes()
         {
             // create all nodes 
-            BaseNode = CreateNode("base", Utils.XPoints / 2, Utils.YPoints / 2, 0);
-            var node1 = CreateNode("n1", 22, 11, 0, BaseNode);
-            var node2 = CreateNode("n2", 18, 11, 0, BaseNode);
-            var node3 = CreateNode("n3", 18, 8, 0, BaseNode);
-            var node4 = CreateNode("n4", 21, 7, 0, BaseNode);
-            var node5 = CreateNode("n5", 24, 7, 0, BaseNode);
+            baseNode = CreateNode("base", Utils.XPoints / 2, Utils.YPoints / 2, 0);
+            var node1 = CreateNode("n1", 22, 11, 0, baseNode);
+            var node2 = CreateNode("n2", 18, 11, 0, baseNode);
+            var node3 = CreateNode("n3", 18, 8, 0, baseNode);
+            var node4 = CreateNode("n4", 21, 7, 0, baseNode);
+            var node5 = CreateNode("n5", 24, 7, 0, baseNode);
             var node6 = CreateNode("n6", 26, 11, 0, node1);
             var node7 = CreateNode("n7", 23, 14, 0, node1);
             var node8 = CreateNode("n8", 19, 15, 0, node2);
@@ -113,11 +112,11 @@ namespace AntColony
             var node73 = CreateNode("n73", 3, 2, 20, node71);
 
             // create all edges
-            CreateEdge(BaseNode, node1);
-            CreateEdge(BaseNode, node2);
-            CreateEdge(BaseNode, node3);
-            CreateEdge(BaseNode, node4);
-            CreateEdge(BaseNode, node5);
+            CreateEdge(baseNode, node1);
+            CreateEdge(baseNode, node2);
+            CreateEdge(baseNode, node3);
+            CreateEdge(baseNode, node4);
+            CreateEdge(baseNode, node5);
             CreateEdge(node1, node5);
             CreateEdge(node1, node6);
             CreateEdge(node1, node7);
@@ -237,24 +236,24 @@ namespace AntColony
         Node CreateNode(string name, int row, int column, int res)
         {
             var node = new Node(name, row, column, res);
-            Nodes.Add(node.Name, node);
+            nodes.Add(node.name, node);
             return node;
         }
 
         Node CreateNode(string name, int row, int column, int res, Node toBase)
         {
             var node = new Node(name, row, column, res);
-            Nodes.Add(node.Name, node);
-            node.ToHome = toBase;
+            nodes.Add(node.name, node);
+            node.toHome = toBase;
             return node;
         }
 
         Edge CreateEdge(Node node1, Node node2)
         {
             var edge = new Edge(node1, node2, 0);
-            Edges.Add(edge);
-            node1.Edges.Add(node2.Name, edge);
-            node2.Edges.Add(node1.Name, edge);
+            edges.Add(edge);
+            node1.edges.Add(node2.name, edge);
+            node2.edges.Add(node1.name, edge);
             return edge;
         }
 
@@ -272,93 +271,136 @@ namespace AntColony
             while (true)
             {
                 Thread.Sleep(1000);
-                foreach (var edge in Edges)
+                foreach (var edge in edges)
                     if (edge.Weight > 0)
-                        edge.Weight -= 0.1;
+                        edge.DecreseWeight(0.1);
             }
 
         }
 
         public override void Act(Message message)
         {
-            Console.WriteLine($@"  [{Name} -> {message.Sender}]: {message.Content}");
-
-            Utils.ParseMessage(message.Content, out string action, out string nodeName);
+            // Console.WriteLine($@"  [{Name} -> {message.Sender}]: {message.Content}");
+            Utils.ParseMessage(message.Content, out string action, out List<string> parameters);
 
             switch (action)
             {
                 case "search":
-                    HandleSearch(message.Sender, nodeName);
+                    HandleSearch(message.Sender, parameters[0], new Position(parameters[1], parameters[2]));
                     break;
 
                 case "carry":
-                    HandleCarry(message.Sender, nodeName);
+                    HandleCarry(message.Sender, parameters[0], new Position(parameters[1], parameters[2]));
                     break;
             }
             _formGui.UpdatePlanetGUI();
         }
 
-        private void HandleCarry(string messageSender, string parameters)
+        private void HandleCarry(string messageSender, string targetNodeName, Position currentPosition)
         {
-            // check if node is base
-            var node = Nodes[parameters];
-            if (node == BaseNode)
+            // register ant position
+            antsPositions[messageSender] = currentPosition;
+
+            var targetNode = nodes[targetNodeName];
+
+            // if ant is not on the target node send move with target node position
+            if (currentPosition.IsNotEqual(targetNode.position))
             {
-                BaseNode.Resource++;
+                Send(messageSender, Utils.Str("move", targetNodeName, targetNode.position.x, targetNode.position.y));
+                return;
+            }
+
+            // check if ant is on base node and send base message
+            if (targetNode == baseNode)
+            {
+                baseNode.resource++;
                 Send(messageSender, "base");
                 return;
             }
 
-            // get next node to base 
-            var nextNode = node.ToHome;
-            Send(messageSender, Utils.Str("move", nextNode.Name));
-            // register ant position
-            AntsPositions[messageSender] = Nodes[nextNode.Name].Pos;
+            // if not on base node get next targetNode to base and send it
+            var nextNode = targetNode.toHome;
+            Send(messageSender, Utils.Str("move", nextNode.name, nextNode.position.x, nextNode.position.y));
             // increase weight of edge
-            node.Edges[nextNode.Name].Weight += 2;
+            targetNode.edges[nextNode.name].IncreseWeight(2);
         }
 
-        private void HandleSearch(string messageSender, string nodeName)
+        private void HandleSearch(string messageSender, string targetNodeName, Position currentPosition)
         {
-            // check if node has food
-            // if node has food send food message to ant
-            var node = Nodes[nodeName];
-            if (node != BaseNode && node.Resource > 0)
+            // register ant position
+            antsPositions[messageSender] = currentPosition;
+
+            Node targetNode = nodes[targetNodeName];
+            // if ant is not on the target targetNode send move with target targetNode position
+            if (currentPosition.IsNotEqual(targetNode.position))
             {
-                Send(messageSender, "food");
-                node.Resource--;
+                Send(messageSender, Utils.Str("move", targetNodeName, targetNode.position.x, targetNode.position.y));
                 return;
             }
 
-            // else get edge with highest weight ( first if multiple edges have the same weight)
-            // send move message to ant with food if there is food
-            string newNodeName = GetHighestWeightNodeName(nodeName);
-            Send(messageSender, Utils.Str("move", newNodeName));
-            // register ant position
-            AntsPositions[messageSender] = Nodes[newNodeName].Pos;
-            // decrease weight of edge
-            node.Edges[newNodeName].Weight--;
-        }
-
-        private string GetHighestWeightNodeName(string nodeName)
-        {
-            var node = Nodes[nodeName];
-
-            var maxEdgePair = node.Edges.First();
-            double maxWeight = maxEdgePair.Value.Weight;
-            foreach (var edgePair in node.Edges)
+            // check if targetNode has food
+            if (targetNode != baseNode && targetNode.resource > 0)
             {
-                var edge = edgePair.Value;
-                if (!(edge.Weight > maxWeight))
-                    continue;
-
-                maxWeight = edge.Weight;
-                maxEdgePair = edgePair;
+                // if targetNode has food send food message to ant
+                Send(messageSender, "food");
+                targetNode.resource--;
+                return;
             }
 
-            return maxWeight == 0
-                ? node.Edges.ElementAt(Utils.RandNoGen.Next(node.Edges.Count)).Key
-                : maxEdgePair.Key;
+            // get best next targetNode to food
+            string nextNodeName = GetBestNextNodeName(targetNodeName);
+            Node nextNode = nodes[nextNodeName];
+            // send move message to ant with next targetNode name and position
+            Send(messageSender, Utils.Str("move", nextNodeName, nextNode.position.x, nextNode.position.y));
+            // decrease weight of edge
+            targetNode.edges[nextNodeName].DecreseWeight(1);
+        }
+
+        private string GetBestNextNodeName(string nodeName)
+        {
+            var node = nodes[nodeName];
+            var edges = new Dictionary<string, Edge>(node.edges);
+
+            if (edges.Count == 1)
+            {
+                // if edge has only one edge home return it
+                return edges.First().Key;
+            }
+            else
+            {
+                // else if edge has more than one edge home remove edge to home only if it has weight != 0
+                // this is done to prevent ants from going to base when they have no food
+                // but allow them to go to base when all other edges have weight 0
+                if (node.toHome != null && edges[node.toHome.name].Weight != 0)
+                    edges.Remove(node.toHome.name);
+            }
+
+            // get maxWeight edges
+            var maxEdgePairs = new List<KeyValuePair<string, Edge>> { edges.First() };
+            double maxWeight = maxEdgePairs[0].Value.Weight;
+            for (int i = 1; i < edges.Count; i++)
+            {
+                var pair = edges.ElementAt(i);
+                if (pair.Value.Weight > maxWeight)
+                {
+                    // if new maxWeight clear list and add new pair
+                    maxEdgePairs.Clear();
+                    maxEdgePairs.Add(pair);
+                    maxWeight = pair.Value.Weight;
+                }
+                else if (pair.Value.Weight == maxWeight)
+                {
+                    // if new pair has same weight as maxWeight add it to list
+                    maxEdgePairs.Add(pair);
+                }
+            }
+
+            if (maxWeight == 0)
+                // if all edges have weight 0 return random edge
+                return edges.ElementAt(Utils.RandNoGen.Next(edges.Count)).Key;
+            else
+                // return random edge from maxWeight edges
+                return maxEdgePairs.ElementAt(Utils.RandNoGen.Next(maxEdgePairs.Count)).Key;
         }
     }
 }
