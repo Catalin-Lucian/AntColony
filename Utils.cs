@@ -5,6 +5,9 @@ namespace AntColony
 {
     public static class Utils
     {
+        public static bool IsOptimizationActive = true;
+        public static int NrOfNodesToCarry = 3;
+
         // World data
         public const int NoAnts = 10;
         public const int Speed = 15;

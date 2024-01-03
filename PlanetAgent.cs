@@ -16,12 +16,15 @@ namespace AntColony
         public Dictionary<string, Position> antsPositions;
         public Node baseNode;
 
-
+        public Dictionary<string, int> antNodesUntilDrop;
+        public Dictionary<string, bool> antJustLeftFood;
 
         public PlanetAgent()
         {
             nodes = new Dictionary<string, Node>();
             edges = new List<Edge>();
+            antNodesUntilDrop = new Dictionary<string, int>();
+            antJustLeftFood = new Dictionary<string, bool>();
             antsPositions = new Dictionary<string, Position>();
             CreateNodes();
 
@@ -311,9 +314,9 @@ namespace AntColony
             }
 
             // check if ant is on base node and send base message
-            if (targetNode == baseNode)
+            if (targetNode == baseNode || (Utils.IsOptimizationActive && CheckTargetNode(messageSender)))
             {
-                baseNode.resource++;
+                targetNode.resource++;
                 Send(messageSender, "base");
                 return;
             }
@@ -339,7 +342,7 @@ namespace AntColony
             }
 
             // check if targetNode has food
-            if (targetNode != baseNode && targetNode.resource > 0)
+            if (targetNode != baseNode && targetNode.resource > 0 && ((!CheckIfAntJustLeftFood(messageSender) ^ Utils.IsOptimizationActive)) ^ Utils.IsOptimizationActive)
             {
                 // if targetNode has food send food message to ant
                 Send(messageSender, "food");
@@ -354,6 +357,36 @@ namespace AntColony
             Send(messageSender, Utils.Str("move", nextNodeName, nextNode.position.x, nextNode.position.y));
             // decrease weight of edge
             targetNode.edges[nextNodeName].DecreseWeight(1);
+        }
+
+        private bool CheckTargetNode(string antName)
+        {
+            if (!antNodesUntilDrop.ContainsKey(antName))
+            {
+                antNodesUntilDrop.Add(antName, Utils.NrOfNodesToCarry);
+                return false;
+            }
+
+            antNodesUntilDrop[antName]--;
+
+            if(antNodesUntilDrop[antName] == 0)
+            {
+                antNodesUntilDrop.Remove(antName);
+                antJustLeftFood.Add(antName, true);
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CheckIfAntJustLeftFood(string antName)
+        {
+            if (antJustLeftFood.ContainsKey(antName) && antJustLeftFood[antName])
+            {
+                antJustLeftFood.Remove(antName);
+                return true;
+            }
+            return false;
         }
 
         private string GetBestNextNodeName(string nodeName)

@@ -9,7 +9,7 @@ namespace AntColony
     {
         private static void Main()
         {
-            var env = new EnvironmentMas(0, 100);
+            var env = new EnvironmentMas(0, 0);
 
             var planetAgent = new PlanetAgent();
             env.Add(planetAgent, "planet");
