@@ -9,8 +9,8 @@ namespace AntColony
         public static int NrOfNodesToCarry = 3;
 
         // World data
-        public const int NoAnts = 10;
-        public const int Speed = 2;
+        public const int NoAnts = 15;
+        public const int Speed = 50;
 
         // side of the square world
         public const int XPoints = 40;

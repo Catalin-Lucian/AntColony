@@ -304,7 +304,7 @@ namespace AntColony
                     HandleCarry(message.Sender, parameters[0], new Position(parameters[1], parameters[2]));
                     break;
             }
-            //_formGui.UpdatePlanetGUI();
+            _formGui.UpdatePlanetGUI();
         }
 
         private void HandleCarry(string messageSender, string targetNodeName, Position currentPosition)
