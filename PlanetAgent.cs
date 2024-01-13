@@ -1,4 +1,5 @@
 ﻿using ActressMas;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,14 +18,14 @@ namespace AntColony
         public Node baseNode;
 
         public Dictionary<string, int> antNodesUntilDrop;
-        public Dictionary<string, bool> antJustLeftFood;
+        public List<String> antJustLeftFood;
 
         public PlanetAgent()
         {
             nodes = new Dictionary<string, Node>();
             edges = new List<Edge>();
             antNodesUntilDrop = new Dictionary<string, int>();
-            antJustLeftFood = new Dictionary<string, bool>();
+            antJustLeftFood = new List<String>();
             antsPositions = new Dictionary<string, Position>();
             CreateNodes();
 
@@ -40,86 +41,85 @@ namespace AntColony
         {
             // create all nodes 
             baseNode = CreateNode("base", Utils.XPoints / 2, Utils.YPoints / 2, 0);
-            var node1 = CreateNode("n1", 22, 11, 0, baseNode);
-            var node2 = CreateNode("n2", 18, 11, 0, baseNode);
-            var node3 = CreateNode("n3", 18, 8, 0, baseNode);
-            var node4 = CreateNode("n4", 21, 7, 0, baseNode);
-            var node5 = CreateNode("n5", 24, 7, 0, baseNode);
-            var node6 = CreateNode("n6", 26, 11, 0, node1);
-            var node7 = CreateNode("n7", 23, 14, 0, node1);
-            var node8 = CreateNode("n8", 19, 15, 0, node2);
-            var node9 = CreateNode("n9", 14, 14, 5, node2);
-            var node10 = CreateNode("n10", 13, 11, 0, node2);
-            var node11 = CreateNode("n11", 14, 8, 0, node2);
-            var node12 = CreateNode("n12", 15, 6, 0, node11);
-            var node13 = CreateNode("n13", 19, 5, 0, node3);
-            var node14 = CreateNode("n14", 23, 5, 0, node5);
-            var node15 = CreateNode("n15", 27, 5, 5, node14);
-            var node16 = CreateNode("n16", 28, 7, 5, node5);
-            var node17 = CreateNode("n17", 29, 10, 0, node6);
-            var node18 = CreateNode("n18", 26, 15, 5, node7);
-            var node19 = CreateNode("n19", 20, 18, 5, node8);
-            var node20 = CreateNode("n20", 17, 17, 0, node8);
-            var node21 = CreateNode("n21", 15, 19, 0, node20);
-            var node22 = CreateNode("n22", 14, 16, 0, node9);
-            var node23 = CreateNode("n23", 12, 17, 0, node22);
-            var node24 = CreateNode("n24", 9, 19, 5, node23);
-            var node25 = CreateNode("n25", 8, 16, 5, node23);
-            var node26 = CreateNode("n26", 6, 15, 10, node25);
-            var node27 = CreateNode("n27", 7, 13, 0, node9);
-            var node28 = CreateNode("n28", 9, 11, 5, node10);
-            var node29 = CreateNode("n29", 9, 8, 0, node11);
-            var node31 = CreateNode("n31", 16, 4, 5, node3);
-            var node30 = CreateNode("n30", 11, 5, 0, node31);
-            var node32 = CreateNode("n32", 19, 1, 0, node31);
-            var node33 = CreateNode("n33", 21, 2, 0, node13);
-            var node34 = CreateNode("n34", 24, 1, 0, node33);
-            var node35 = CreateNode("n35", 25, 3, 0, node14);
-            var node36 = CreateNode("n36", 28, 1, 0, node34);
-            var node37 = CreateNode("n37", 29, 3, 10, node35);
-            var node38 = CreateNode("n38", 33, 1, 0, node37);
-            var node39 = CreateNode("n39", 32, 6, 15, node16);
-            var node40 = CreateNode("n40", 31, 8, 10, node17);
-            var node41 = CreateNode("n41", 31, 12, 0, node17);
-            var node42 = CreateNode("n42", 30, 14, 5, node6);
-            var node43 = CreateNode("n43", 29, 17, 20, node42);
-            var node44 = CreateNode("n44", 27, 19, 5, node18);
-            var node45 = CreateNode("n45", 23, 19, 0, node7);
-            var node46 = CreateNode("n46", 35, 3, 20, node39);
-            var node47 = CreateNode("n47", 33, 9, 0, node40);
-            var node48 = CreateNode("n48", 34, 11, 0, node41);
-            var node49 = CreateNode("n49", 33, 15, 0, node42);
-            var node50 = CreateNode("n50", 30, 19, 5, node43);
-            var node51 = CreateNode("n51", 38, 1, 25, node46);
-            var node52 = CreateNode("n52", 38, 5, 0, node46);
-            var node53 = CreateNode("n53", 37, 7, 0, node39);
-            var node54 = CreateNode("n54", 38, 10, 0, node47);
-            var node55 = CreateNode("n55", 37, 14, 0, node48);
-            var node56 = CreateNode("n56", 35, 16, 0, node49);
-            var node57 = CreateNode("n57", 34, 18, 0, node56);
-            var node58 = CreateNode("n58", 38, 17, 0, node56);
-            var node59 = CreateNode("n59", 6, 19, 15, node24);
-            var node60 = CreateNode("n60", 3, 18, 20, node25);
-            var node61 = CreateNode("n61", 4, 14, 15, node26);
-            var node62 = CreateNode("n62", 6, 9, 0, node28);
-            var node63 = CreateNode("n63", 4, 11, 0, node62);
-            var node64 = CreateNode("n64", 4, 7, 5, node62);
-            var node65 = CreateNode("n65", 7, 5, 5, node29);
-            var node66 = CreateNode("n66", 11, 2, 5, node30);
-            var node67 = CreateNode("n67", 15, 1, 0, node31);
-            var node68 = CreateNode("n68", 1, 11, 0, node61);
-            var node69 = CreateNode("n69", 1, 8, 0, node63);
-            var node70 = CreateNode("n70", 2, 5, 15, node64);
-            var node71 = CreateNode("n71", 5, 3, 15, node65);
-            var node72 = CreateNode("n72", 6, 1, 10, node66);
-            var node73 = CreateNode("n73", 3, 2, 20, node71);
+            var node1 = CreateNode("n1", 22, 11, 0, baseNode, 1);
+            var node2 = CreateNode("n2", 18, 11, 0, baseNode, 1);
+            var node3 = CreateNode("n3", 18, 8, 0, baseNode, 1);
+            var node4 = CreateNode("n4", 21, 7, 0, baseNode, 1);
+            var node5 = CreateNode("n5", 24, 7, 0, node1, 2);
+            var node6 = CreateNode("n6", 26, 11, 0, node1, 2);
+            var node7 = CreateNode("n7", 23, 14, 0, node1, 2);
+            var node8 = CreateNode("n8", 19, 15, 0, node2, 2);
+            var node9 = CreateNode("n9", 14, 14, 5, node2, 2);
+            var node10 = CreateNode("n10", 13, 11, 0, node2, 2);
+            var node11 = CreateNode("n11", 14, 8, 0, node2, 2);
+            var node12 = CreateNode("n12", 15, 6, 0, node11, 3);
+            var node13 = CreateNode("n13", 19, 5, 0, node3, 2);
+            var node14 = CreateNode("n14", 23, 5, 0, node5, 3);
+            var node15 = CreateNode("n15", 27, 5, 5, node14, 4);
+            var node16 = CreateNode("n16", 28, 7, 5, node5, 3);
+            var node17 = CreateNode("n17", 29, 10, 0, node6, 3);
+            var node18 = CreateNode("n18", 26, 15, 5, node7, 3);
+            var node19 = CreateNode("n19", 20, 18, 5, node8, 3);
+            var node20 = CreateNode("n20", 17, 17, 0, node8, 3);
+            var node21 = CreateNode("n21", 15, 19, 0, node20, 4);
+            var node22 = CreateNode("n22", 14, 16, 0, node9, 3);
+            var node23 = CreateNode("n23", 12, 17, 0, node22, 4);
+            var node24 = CreateNode("n24", 9, 19, 5, node23, 5);
+            var node25 = CreateNode("n25", 8, 16, 5, node23, 5);
+            var node26 = CreateNode("n26", 6, 15, 10, node25, 6);
+            var node27 = CreateNode("n27", 7, 13, 0, node9, 3);
+            var node28 = CreateNode("n28", 9, 11, 5, node10, 3);
+            var node29 = CreateNode("n29", 9, 8, 0, node11, 3);
+            var node31 = CreateNode("n31", 16, 4, 5, node3, 2);
+            var node30 = CreateNode("n30", 11, 5, 0, node31, 3);
+            var node32 = CreateNode("n32", 19, 1, 0, node31, 3);
+            var node33 = CreateNode("n33", 21, 2, 0, node13, 3);
+            var node34 = CreateNode("n34", 24, 1, 0, node33, 4);
+            var node35 = CreateNode("n35", 25, 3, 0, node14, 4);
+            var node36 = CreateNode("n36", 28, 1, 0, node34, 5);
+            var node37 = CreateNode("n37", 29, 3, 10, node35, 5);
+            var node38 = CreateNode("n38", 33, 1, 0, node37, 6);
+            var node39 = CreateNode("n39", 32, 6, 15, node16, 4);
+            var node40 = CreateNode("n40", 31, 8, 10, node17, 4);
+            var node41 = CreateNode("n41", 31, 12, 0, node17, 4);
+            var node42 = CreateNode("n42", 30, 14, 5, node6, 3);
+            var node43 = CreateNode("n43", 29, 17, 20, node42, 4);
+            var node44 = CreateNode("n44", 27, 19, 5, node18, 4);
+            var node45 = CreateNode("n45", 23, 19, 0, node7, 3);
+            var node46 = CreateNode("n46", 35, 3, 20, node39, 5);
+            var node47 = CreateNode("n47", 33, 9, 0, node40, 5);
+            var node48 = CreateNode("n48", 34, 11, 0, node41, 5);
+            var node49 = CreateNode("n49", 33, 15, 0, node42, 4);
+            var node50 = CreateNode("n50", 30, 19, 5, node43, 5);
+            var node51 = CreateNode("n51", 38, 1, 25, node46, 6);
+            var node52 = CreateNode("n52", 38, 5, 0, node46, 6);
+            var node53 = CreateNode("n53", 37, 7, 0, node39, 5);
+            var node54 = CreateNode("n54", 38, 10, 0, node47, 6);
+            var node55 = CreateNode("n55", 37, 14, 0, node48, 6);
+            var node56 = CreateNode("n56", 35, 16, 0, node49, 5);
+            var node57 = CreateNode("n57", 34, 18, 0, node56, 6);
+            var node58 = CreateNode("n58", 38, 17, 0, node56, 6);
+            var node59 = CreateNode("n59", 6, 19, 15, node24, 6);
+            var node60 = CreateNode("n60", 3, 18, 20, node25, 6);
+            var node61 = CreateNode("n61", 4, 14, 15, node26, 7);
+            var node62 = CreateNode("n62", 6, 9, 0, node28, 4);
+            var node63 = CreateNode("n63", 4, 11, 0, node62, 5);
+            var node64 = CreateNode("n64", 4, 7, 5, node62, 5);
+            var node65 = CreateNode("n65", 7, 5, 5, node29, 4);
+            var node66 = CreateNode("n66", 11, 2, 5, node30, 4);
+            var node67 = CreateNode("n67", 15, 1, 0, node31, 3);
+            var node68 = CreateNode("n68", 1, 11, 0, node61, 8);
+            var node69 = CreateNode("n69", 1, 8, 0, node63, 6);
+            var node70 = CreateNode("n70", 2, 5, 15, node64, 6);
+            var node71 = CreateNode("n71", 5, 3, 15, node65, 5);
+            var node72 = CreateNode("n72", 6, 1, 10, node66, 5);
+            var node73 = CreateNode("n73", 3, 2, 20, node71, 6);
 
             // create all edges
             CreateEdge(baseNode, node1);
             CreateEdge(baseNode, node2);
             CreateEdge(baseNode, node3);
             CreateEdge(baseNode, node4);
-            CreateEdge(baseNode, node5);
             CreateEdge(node1, node5);
             CreateEdge(node1, node6);
             CreateEdge(node1, node7);
@@ -243,9 +243,9 @@ namespace AntColony
             return node;
         }
 
-        Node CreateNode(string name, int row, int column, int res, Node toBase)
+        Node CreateNode(string name, int row, int column, int res, Node toBase, int nodesToHome)
         {
-            var node = new Node(name, row, column, res);
+            var node = new Node(name, row, column, res, nodesToHome);
             nodes.Add(node.name, node);
             node.toHome = toBase;
             return node;
@@ -313,8 +313,8 @@ namespace AntColony
                 return;
             }
 
-            // check if ant is on base node and send base message
-            if (targetNode == baseNode || (Utils.IsOptimizationActive && CheckTargetNode(messageSender)))
+            // check if ant is on base node or on targent node (half way) and send base message 
+            if ((Utils.IsOptimizationActive && CheckTargetNode(messageSender, targetNode)) || targetNode == baseNode)
             {
                 targetNode.resource++;
                 Send(messageSender, "base");
@@ -341,10 +341,13 @@ namespace AntColony
                 return;
             }
 
-            // check if targetNode has food
-            if (targetNode != baseNode && targetNode.resource > 0 && ((!CheckIfAntJustLeftFood(messageSender) ^ Utils.IsOptimizationActive)) ^ Utils.IsOptimizationActive)
-            {
+            // check if targetNode has food (skin if food was just left)
+            if (!(Utils.IsOptimizationActive && CheckIfAntJustLeftFood(messageSender)) && targetNode != baseNode && targetNode.resource > 0)
+            {    
                 // if targetNode has food send food message to ant
+                // targetNode represent currentNode if ant achieve it
+                //RegisterUntilDrop(messageSender, targetNode);
+
                 Send(messageSender, "food");
                 targetNode.resource--;
                 return;
@@ -359,11 +362,16 @@ namespace AntColony
             targetNode.edges[nextNodeName].DecreseWeight(1);
         }
 
-        private bool CheckTargetNode(string antName)
+        private void RegisterUntilDrop(string antName, Node currentNode)
+        {
+            antNodesUntilDrop[antName] = (currentNode.nodesToHome + 1) / 2;
+        }
+
+        private bool CheckTargetNode(string antName, Node currentNode)
         {
             if (!antNodesUntilDrop.ContainsKey(antName))
             {
-                antNodesUntilDrop.Add(antName, Utils.NrOfNodesToCarry);
+                RegisterUntilDrop(antName, currentNode);
                 return false;
             }
 
@@ -372,7 +380,7 @@ namespace AntColony
             if(antNodesUntilDrop[antName] == 0)
             {
                 antNodesUntilDrop.Remove(antName);
-                antJustLeftFood.Add(antName, true);
+                antJustLeftFood.Add(antName);
                 return true;
             }
 
@@ -381,7 +389,7 @@ namespace AntColony
 
         private bool CheckIfAntJustLeftFood(string antName)
         {
-            if (antJustLeftFood.ContainsKey(antName) && antJustLeftFood[antName])
+            if (antJustLeftFood.Contains(antName))
             {
                 antJustLeftFood.Remove(antName);
                 return true;
@@ -399,14 +407,14 @@ namespace AntColony
                 // if edge has only one edge home return it
                 return edges.First().Key;
             }
-            else
-            {
-                // else if edge has more than one edge home remove edge to home only if it has weight != 0
-                // this is done to prevent ants from going to base when they have no food
-                // but allow them to go to base when all other edges have weight 0
-                if (node.toHome != null && edges[node.toHome.name].Weight != 0)
-                    edges.Remove(node.toHome.name);
-            }
+            //else
+            //{
+            //    // else if edge has more than one edge home remove edge to home only if it has weight != 0
+            //    // this is done to prevent ants from going to base when they have no food
+            //    // but allow them to go to base when all other edges have weight 0
+            //    if (node.toHome != null && edges[node.toHome.name].Weight != 0)
+            //        edges.Remove(node.toHome.name);
+            //}
 
             // get maxWeight edges
             var maxEdgePairs = new List<KeyValuePair<string, Edge>> { edges.First() };
