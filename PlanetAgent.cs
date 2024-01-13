@@ -20,6 +20,9 @@ namespace AntColony
         public Dictionary<string, int> antNodesUntilDrop;
         public List<String> antJustLeftFood;
 
+        private int totalResources;
+        private DateTime startTime;
+
         public PlanetAgent()
         {
             nodes = new Dictionary<string, Node>();
@@ -27,6 +30,7 @@ namespace AntColony
             antNodesUntilDrop = new Dictionary<string, int>();
             antJustLeftFood = new List<String>();
             antsPositions = new Dictionary<string, Position>();
+            totalResources = 0;
             CreateNodes();
 
             var t = new Thread(GuiThread);
@@ -34,6 +38,8 @@ namespace AntColony
 
             var d = new Thread(DecayEdges);
             d.Start();
+
+            startTime = DateTime.Now;
         }
 
 
@@ -240,6 +246,7 @@ namespace AntColony
         {
             var node = new Node(name, row, column, res);
             nodes.Add(node.name, node);
+            totalResources += res;
             return node;
         }
 
@@ -247,6 +254,7 @@ namespace AntColony
         {
             var node = new Node(name, row, column, res, nodesToHome);
             nodes.Add(node.name, node);
+            totalResources += res;
             node.toHome = toBase;
             return node;
         }
@@ -296,7 +304,7 @@ namespace AntColony
                     HandleCarry(message.Sender, parameters[0], new Position(parameters[1], parameters[2]));
                     break;
             }
-            _formGui.UpdatePlanetGUI();
+            //_formGui.UpdatePlanetGUI();
         }
 
         private void HandleCarry(string messageSender, string targetNodeName, Position currentPosition)
@@ -317,6 +325,15 @@ namespace AntColony
             if ((Utils.IsOptimizationActive && CheckTargetNode(messageSender, targetNode)) || targetNode == baseNode)
             {
                 targetNode.resource++;
+                //finish condition
+                if (targetNode == baseNode && totalResources == targetNode.resource)
+                {
+                    Broadcast("stop");
+                    var entTime = DateTime.Now;
+                    var duration = entTime - startTime;
+                    Console.WriteLine("Elapsed time with optimization = " + Utils.IsOptimizationActive + " :" + duration.TotalSeconds + "s");
+                    this.Stop();
+                }
                 Send(messageSender, "base");
                 return;
             }
