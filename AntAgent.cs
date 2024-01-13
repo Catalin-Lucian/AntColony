@@ -41,6 +41,10 @@ namespace AntColony
                 case "base":
                     HandleBaseAction();
                     break;
+
+                case "stop":
+                    this.Stop();
+                    break;
             }
         }
 
